@@ -67,6 +67,10 @@ public class CidadeEstadoTO implements Serializable {
 		this.nomeFormatado = nomeFormatado;
 	}
 	
+	public CidadeEstadoTO() {
+		
+	}
+	
 	private static List<CidadeEstadoTO> gerarListagemTeste(){
 		List<CidadeEstadoTO> lista = new ArrayList<>();
 		lista.add(new CidadeEstadoTO("1", "CE", "Nordeste", "Fortaleza", "Regiao 1", "Fortaleza/CE"));
