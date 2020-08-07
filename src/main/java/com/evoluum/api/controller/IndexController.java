@@ -3,6 +3,7 @@ package com.evoluum.api.controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.evoluum.api.to.MontagemRelatorioTO;
+import com.evoluum.api.util.RelatorioUtil;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
@@ -44,41 +47,43 @@ public class IndexController {
 	
 	 public static ByteArrayInputStream gerarRelatorio() {
 
-	        Document document = new Document();
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-	        try {
-
-	            PdfPTable table = new PdfPTable(3);
-	            table.setWidthPercentage(60);
-	            table.setWidths(new int[]{1, 3, 3});
-
-	            Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
-
-	            PdfPCell hcell;
-	            hcell = new PdfPCell(new Phrase("Id", headFont));
-	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-	            table.addCell(hcell);
-
-	            hcell = new PdfPCell(new Phrase("Name", headFont));
-	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-	            table.addCell(hcell);
-
-	            hcell = new PdfPCell(new Phrase("Population", headFont));
-	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
-	            table.addCell(hcell);
-	            
-	            PdfWriter.getInstance(document, out);
-	            document.open();
-	            document.add(table);
-	            
-	            document.close();
-	
-	
-}catch(Exception e) {
-	System.out.println(e);
-}
 	        
-	        return new ByteArrayInputStream(out.toByteArray());
+
+	        
+	        	
+	        	return RelatorioUtil.gerarRelatorio(new MontagemRelatorioTO(4, 
+	        			60, new int[]{1, 3, 3,3}, FontFactory.HELVETICA_BOLD, Element.ALIGN_CENTER, 
+	        			Arrays.asList("Ïd","Name","Population","Teste")));
+	        	
+//	        	return  
+//
+//	            PdfPTable table = new PdfPTable(3);
+//	            table.setWidthPercentage(60);
+//	            table.setWidths();
+//
+//	            Font headFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD);
+//
+//	            PdfPCell hcell;
+//	            hcell = new PdfPCell(new Phrase("Id", headFont));
+//	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//	            table.addCell(hcell);
+//
+//	            hcell = new PdfPCell(new Phrase("Name", headFont));
+//	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//	            table.addCell(hcell);
+//
+//	            hcell = new PdfPCell(new Phrase("Population", headFont));
+//	            hcell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//	            table.addCell(hcell);
+//	            
+//	            PdfWriter.getInstance(document, out);
+//	            document.open();
+//	            document.add(table);
+//	            
+//	            document.close();
+	
+	
+
+	        
 	 }
 }
