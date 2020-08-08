@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -44,9 +46,13 @@ private final static String API_ESTADOS = "https://servicodados.ibge.gov.br/api/
 private final static String API_CIDADES ="https://servicodados.ibge.gov.br/api/v1/localidades/estados/%UF%/municipios";
 private final static String PLACEHOLDER ="%UF%";
 
+private static final Logger LOGGER  = LogManager.getLogger(ListagemController.class);
+
 @GetMapping("/exportar")
 public ResponseEntity<InputStreamResource>  processLista() throws IOException {
 	
+	
+	LOGGER.info("[exportar]iniciando processamento");
 	List<CidadeEstadoTO> listagem = new ArrayList<>();
 	ObjectMapper objectMapper = new ObjectMapper();
     Set<Estado> estados = objectMapper.readValue(new URL(API_ESTADOS), new TypeReference<Set<Estado>>(){});
@@ -75,7 +81,7 @@ public ResponseEntity<InputStreamResource>  processLista() throws IOException {
         headers.add("Content-Disposition", "inline; filename=listagem.pdf");
 	
 	
-	
+        LOGGER.info("[exportar]finalizando processamento");
     
     
     return ResponseEntity
