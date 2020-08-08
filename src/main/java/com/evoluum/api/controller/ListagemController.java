@@ -11,6 +11,9 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.evoluum.api.entity.Cidade;
 import com.evoluum.api.to.CidadeEstadoTO;
 import com.evoluum.api.entity.Estado;
+import com.evoluum.api.service.CidadeService;
+import com.evoluum.api.service.EstadoService;
 import com.evoluum.api.to.MontagemRelatorioTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,9 +47,14 @@ import com.itextpdf.text.pdf.PdfWriter;
 @RequestMapping("/listagem")
 public class ListagemController {
 
-private final static String API_ESTADOS = "https://servicodados.ibge.gov.br/api/v1/localidades/estados";
-private final static String API_CIDADES ="https://servicodados.ibge.gov.br/api/v1/localidades/estados/%UF%/municipios";
-private final static String PLACEHOLDER ="%UF%";
+
+
+
+@Autowired
+private EstadoService estadoService;
+
+@Autowired
+private CidadeService cidadeService; 
 
 private static final Logger LOGGER  = LogManager.getLogger(ListagemController.class);
 
@@ -53,13 +63,12 @@ public ResponseEntity<InputStreamResource>  processLista() throws IOException {
 	
 	
 	LOGGER.info("[exportar]iniciando processamento");
+	long start = System.currentTimeMillis();
 	List<CidadeEstadoTO> listagem = new ArrayList<>();
-	ObjectMapper objectMapper = new ObjectMapper();
-    Set<Estado> estados = objectMapper.readValue(new URL(API_ESTADOS), new TypeReference<Set<Estado>>(){});
+    Set<Estado> estados = estadoService.getEstados();
     for(Estado estado : estados) {
     	
-	String urlCidade =API_CIDADES.replace(PLACEHOLDER, estado.getSigla());     
-	Set<Cidade> cidades = objectMapper.readValue(new URL(urlCidade), new TypeReference<Set<Cidade>>(){});
+	Set<Cidade> cidades = cidadeService.getCidades(estado);
     
     for(Cidade cidade  : cidades) {
     	CidadeEstadoTO to = new CidadeEstadoTO();
@@ -76,13 +85,15 @@ public ResponseEntity<InputStreamResource>  processLista() throws IOException {
     ByteArrayInputStream bis =  gerarRelatorio(new MontagemRelatorioTO(6, 
  			80, new int[]{2, 4, 4,6,6,6}, FontFactory.HELVETICA_BOLD, Element.ALIGN_CENTER, 
  			Arrays.asList("Id Estado","Sigla Estado","Regiao","Cidade","MesoRregiao","Nome Formatado")), listagem);
+    
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline; filename=listagem.pdf");
 	
 	
         LOGGER.info("[exportar]finalizando processamento");
-    
+        long end = System.currentTimeMillis();
+        LOGGER.info(String.format("Tempo de processamento:%s segundos", (end - start) / 1000F));
     
     return ResponseEntity
             .ok()
