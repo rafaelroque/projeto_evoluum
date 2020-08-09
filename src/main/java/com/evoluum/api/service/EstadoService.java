@@ -12,24 +12,27 @@ import org.springframework.stereotype.Service;
 
 import com.evoluum.api.entity.Estado;
 import com.evoluum.api.exception.ListagemException;
+import com.evoluum.api.util.Constantes;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 @Service
 public class EstadoService {
 	
-	private final static String API_ESTADOS = "https://servicodados.ibge.gov.br/api/v1/localidades/estados";
 	
 	private static final Logger LOGGER  = LogManager.getLogger(EstadoService.class);
 
 	@Cacheable("estados")
-	@HystrixCommand(fallbackMethod = "getFallbackEstados")
+	@HystrixCommand(fallbackMethod = "getFallbackEstados", commandProperties = {
+			   @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000")
+			})
 	public Set<Estado> getEstados() throws JsonParseException, JsonMappingException, MalformedURLException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
-	    Set<Estado> estados = objectMapper.readValue(new URL(API_ESTADOS), new TypeReference<Set<Estado>>(){});
+	    Set<Estado> estados = objectMapper.readValue(new URL(Constantes.API_ESTADOS), new TypeReference<Set<Estado>>(){});
 	    return estados;
 	}
 	
