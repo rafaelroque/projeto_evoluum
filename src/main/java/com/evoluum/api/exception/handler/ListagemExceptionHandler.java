@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.evoluum.api.exception.ListagemException;
 
+
 @ControllerAdvice
 public class ListagemExceptionHandler {
 	
