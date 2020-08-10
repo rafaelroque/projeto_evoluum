@@ -1,7 +1,6 @@
 package com.evoluum.api.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,15 +24,10 @@ import com.evoluum.api.entity.Estado;
 import com.evoluum.api.service.CidadeService;
 import com.evoluum.api.service.EstadoService;
 import com.evoluum.api.to.MontagemRelatorioTO;
-import com.itextpdf.text.Document;
+import com.evoluum.api.util.RelatorioUtil;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 /**
  * 
  * @author Rafael Roque
@@ -52,7 +46,7 @@ public class ListagemController {
 	private static final Logger LOGGER  = LogManager.getLogger(ListagemController.class);	
 
 	@GetMapping("/exportar")
-	public ResponseEntity<?>  processLista() throws IOException, DocumentException {
+	public ResponseEntity<InputStreamResource> export() throws IOException, DocumentException {
 
 		LOGGER.info("[EXPORTAR]iniciando processamento");
 		long start = System.currentTimeMillis();
@@ -75,9 +69,9 @@ public class ListagemController {
 			}
 		}
 
-		ByteArrayInputStream bis =  gerarRelatorio(new MontagemRelatorioTO(6, 
+		ByteArrayInputStream bis =  RelatorioUtil.generatePdfReport(new MontagemRelatorioTO(6, 
 				80, new int[]{2, 4, 4,6,6,6}, FontFactory.HELVETICA_BOLD, Element.ALIGN_CENTER, 
-				Arrays.asList("Id Estado","Sigla Estado","Regiao","Cidade","MesoRregiao","Nome Formatado")), listagem);
+				Arrays.asList("Id Estado","Sigla Estado","Regiao","Cidade","Mesorregiao","Nome Formatado")), listagem);
 
 
 		HttpHeaders headers = new HttpHeaders();
@@ -95,71 +89,7 @@ public class ListagemController {
 
 	}
 
-	public static ByteArrayInputStream gerarRelatorio(MontagemRelatorioTO to , List<CidadeEstadoTO> lista) throws DocumentException {
-
-		Document document = new Document();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-		PdfPTable table = new PdfPTable(to.getNumColumns());
-		table.setWidthPercentage(to.getWidthPercentage());
-		table.setWidths(to.getWidths());
-
-		Font headFont = FontFactory.getFont(to.getFont());
-
-		for(String cabecalho  : to.getLabelColunas()) {
-			PdfPCell hcell =new PdfPCell(new Phrase(cabecalho, headFont));
-			hcell.setHorizontalAlignment(to.getHorizontalAlignment());
-			table.addCell(hcell);
-		}
-
-		for(CidadeEstadoTO  obj : lista) {
-			PdfPCell cell;
-
-			cell = new PdfPCell(new Phrase(obj.getIdEstado().toString()));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(cell);
-
-			cell = new PdfPCell(new Phrase(obj.getSiglaEstado()));
-			cell.setPaddingLeft(5);
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_LEFT);
-			table.addCell(cell);
-
-			cell = new PdfPCell(new Phrase(obj.getRegiaoNome()));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell.setPaddingRight(5);
-			table.addCell(cell);
-
-			cell = new PdfPCell(new Phrase(obj.getNomeCidade()));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell.setPaddingRight(5);
-			table.addCell(cell);
-
-			cell = new PdfPCell(new Phrase(obj.getNomeMesorregiao()));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell.setPaddingRight(5);
-			table.addCell(cell);
-
-			cell = new PdfPCell(new Phrase(obj.getNomeFormatado()));
-			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-			cell.setPaddingRight(5);
-			table.addCell(cell);
-
-		}
-
-		PdfWriter.getInstance(document, out);
-		document.open();
-		document.add(table);
-
-		document.close();
-
-		return new ByteArrayInputStream(out.toByteArray());
-	}
+	
 
 
 
