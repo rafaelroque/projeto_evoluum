@@ -1,5 +1,0 @@
-**LOGGING**
--Uso do Log4j2 com a utilizacao de logs assincronos que apresentam melhor performance:
-https://www.loggly.com/blog/benchmarking-java-logging-frameworks/
-https://springframework.guru/asynchronous-logging-with-log4j-2/
-https://howtodoinjava.com/spring-boot2/logging/spring-boot2-log4j2-properties/
