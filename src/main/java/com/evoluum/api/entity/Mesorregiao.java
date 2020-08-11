@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Mesorregiao implements Serializable {
+public class Mesorregiao extends BaseEntity implements Serializable {
 	
 	
 	
@@ -12,28 +12,9 @@ public class Mesorregiao implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@JsonProperty
-	private String id;
-	@JsonProperty
-	private String nome;
+	
 	@JsonProperty
 	private UF UF;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-	
-	
-	
-
 
 
 	public UF getUF() {
@@ -44,9 +25,7 @@ public class Mesorregiao implements Serializable {
 		UF = uF;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+	
 	
 	public Mesorregiao() {
 		
