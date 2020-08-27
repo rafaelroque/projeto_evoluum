@@ -29,7 +29,7 @@ public class EstadoService {
 
 	@Cacheable("estados")
 	@HystrixCommand(fallbackMethod = "getFallbackEstados", commandProperties = {
-			   @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000")
+			   @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000")
 			})
 	public Set<Estado> getEstados() throws JsonParseException, JsonMappingException, MalformedURLException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();

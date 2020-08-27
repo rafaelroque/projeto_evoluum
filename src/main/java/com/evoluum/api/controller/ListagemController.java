@@ -2,6 +2,7 @@ package com.evoluum.api.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,8 @@ import com.evoluum.api.service.CidadeService;
 import com.evoluum.api.service.EstadoService;
 import com.evoluum.api.to.MontagemRelatorioTO;
 import com.evoluum.api.util.RelatorioUtil;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
@@ -50,6 +53,31 @@ public class ListagemController {
 
 		LOGGER.info("[EXPORTAR]iniciando processamento");
 		long start = System.currentTimeMillis();
+		
+		List<CidadeEstadoTO> listagem = montarRetorno();
+		
+		ByteArrayInputStream bis =  RelatorioUtil.generatePdfReport(new MontagemRelatorioTO(6, 
+				80, new int[]{2, 4, 4,6,6,6}, FontFactory.HELVETICA_BOLD, Element.ALIGN_CENTER, 
+				Arrays.asList("Id Estado","Sigla Estado","Regiao","Cidade","Mesorregiao","Nome Formatado")), listagem);
+
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Disposition", "inline; filename=listagem.pdf");
+
+		LOGGER.info("[EXPORTAR]finalizando processamento");
+		long end = System.currentTimeMillis();
+		LOGGER.info(String.format("Tempo de processamento:%s segundos", (end - start) / 1000F));
+
+		return ResponseEntity
+				.ok()
+				.headers(headers)
+				.contentType(MediaType.APPLICATION_PDF)
+				.body(new InputStreamResource(bis));
+
+	}
+	
+	private List<CidadeEstadoTO> montarRetorno() throws JsonParseException, JsonMappingException, MalformedURLException, IOException {
+		
 		List<CidadeEstadoTO> listagem = new ArrayList<>();
 		Set<Estado> estados = estadoService.getEstados();
 
@@ -69,24 +97,7 @@ public class ListagemController {
 			}
 		}
 
-		ByteArrayInputStream bis =  RelatorioUtil.generatePdfReport(new MontagemRelatorioTO(6, 
-				80, new int[]{2, 4, 4,6,6,6}, FontFactory.HELVETICA_BOLD, Element.ALIGN_CENTER, 
-				Arrays.asList("Id Estado","Sigla Estado","Regiao","Cidade","Mesorregiao","Nome Formatado")), listagem);
-
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Disposition", "inline; filename=listagem.pdf");
-
-		LOGGER.info("[EXPORTAR]finalizando processamento");
-		long end = System.currentTimeMillis();
-		LOGGER.info(String.format("Tempo de processamento:%s segundos", (end - start) / 1000F));
-
-		return ResponseEntity
-				.ok()
-				.headers(headers)
-				.contentType(MediaType.APPLICATION_PDF)
-				.body(new InputStreamResource(bis));
-
+		return listagem;
 	}
 
 	
