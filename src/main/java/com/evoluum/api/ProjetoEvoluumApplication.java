@@ -25,8 +25,8 @@ public class ProjetoEvoluumApplication {
 	}
 	
 	@Bean
-	public Map<String , ProcessaRetorno> mapaRetorno(){
-		Map<String , ProcessaRetorno> mapa = new HashMap<String , ProcessaRetorno>();
+	public Map<String , ? super ProcessaRetorno> mapaRetorno(){
+		Map<String , ? super ProcessaRetorno> mapa = new HashMap<String ,  ProcessaRetorno>();
 		mapa.put(Constantes.ReturnType.PDF, new ProcessaRetornoPdf() );
 		mapa.put(Constantes.ReturnType.JSON, new ProcessaRetornoJson() );
 		mapa.put(Constantes.ReturnType.XML, new ProcessaRetornoXml() );
