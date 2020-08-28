@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.evoluum.api.entity.Cidade;
@@ -34,15 +36,15 @@ public class ListagemController {
 	private EstadoService estadoService;
 
 	@Autowired
-	private CidadeService cidadeService; 
+	private CidadeService cidadeService; 	
 	
 	@Autowired
-	private ProcessaRetorno retorno;
+	private Map<String , ProcessaRetorno> mapaRetorno;
 
 	
 	@GetMapping("/exportar")
-	public ResponseEntity<?> gerarRetorno() throws JsonParseException, JsonMappingException, MalformedURLException, DocumentException, IOException{
-		return retorno.processar(montarRetorno());
+	public ResponseEntity<?> gerarRetorno(@RequestParam(name = "type") String returnType) throws JsonParseException, JsonMappingException, MalformedURLException, DocumentException, IOException{
+	    return mapaRetorno.get(returnType).processar(montarRetorno());
 	}
 	
 	

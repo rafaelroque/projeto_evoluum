@@ -1,5 +1,8 @@
 package com.evoluum.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -19,8 +22,10 @@ public class ProjetoEvoluumApplication {
 	}
 	
 	@Bean
-	public ProcessaRetorno retorno() {
-		return new ProcessaRetornoPdf();
+	public Map<String , ProcessaRetorno> mapaRetorno(){
+		Map<String , ProcessaRetorno> mapa = new HashMap<>();
+		mapa.put("pdf", new ProcessaRetornoPdf() );
+		return mapa;
 	}
-
+	
 }
