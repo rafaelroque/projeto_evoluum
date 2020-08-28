@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.evoluum.api.entity.Cidade;
@@ -23,7 +22,6 @@ import com.evoluum.api.service.CidadeService;
 import com.evoluum.api.service.EstadoService;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.itextpdf.text.DocumentException;
 /**
  * 
  * @author Rafael Roque
