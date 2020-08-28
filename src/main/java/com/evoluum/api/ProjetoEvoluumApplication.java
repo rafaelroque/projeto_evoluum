@@ -10,7 +10,9 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.context.annotation.Bean;
 
 import com.evoluum.api.retorno.ProcessaRetorno;
+import com.evoluum.api.retorno.ProcessaRetornoJson;
 import com.evoluum.api.retorno.ProcessaRetornoPdf;
+import com.evoluum.api.retorno.ProcessaRetornoXml;
 import com.evoluum.api.util.Constantes;
 
 @SpringBootApplication
@@ -26,6 +28,8 @@ public class ProjetoEvoluumApplication {
 	public Map<String , ProcessaRetorno> mapaRetorno(){
 		Map<String , ProcessaRetorno> mapa = new HashMap<String , ProcessaRetorno>();
 		mapa.put(Constantes.ReturnType.PDF, new ProcessaRetornoPdf() );
+		mapa.put(Constantes.ReturnType.JSON, new ProcessaRetornoJson() );
+		mapa.put(Constantes.ReturnType.XML, new ProcessaRetornoXml() );
 		return mapa;
 	}
 	
