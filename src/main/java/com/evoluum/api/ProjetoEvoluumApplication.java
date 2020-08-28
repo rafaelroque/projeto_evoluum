@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 
 import com.evoluum.api.retorno.ProcessaRetorno;
 import com.evoluum.api.retorno.ProcessaRetornoPdf;
+import com.evoluum.api.util.Constantes;
 
 @SpringBootApplication
 @EnableCaching
@@ -23,8 +24,8 @@ public class ProjetoEvoluumApplication {
 	
 	@Bean
 	public Map<String , ProcessaRetorno> mapaRetorno(){
-		Map<String , ProcessaRetorno> mapa = new HashMap<>();
-		mapa.put("pdf", new ProcessaRetornoPdf() );
+		Map<String , ProcessaRetorno> mapa = new HashMap<String , ProcessaRetorno>();
+		mapa.put(Constantes.ReturnType.PDF, new ProcessaRetornoPdf() );
 		return mapa;
 	}
 	
