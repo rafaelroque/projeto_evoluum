@@ -4,20 +4,17 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.evoluum.api.entity.Cidade;
 import com.evoluum.api.to.CidadeEstadoTO;
 import com.evoluum.api.entity.Estado;
-import com.evoluum.api.retorno.ProcessaRetorno;
+import com.evoluum.api.retorno.TipoRetornoFactory;
 import com.evoluum.api.service.CidadeService;
 import com.evoluum.api.service.EstadoService;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -38,14 +35,17 @@ public class ListagemController {
 	private CidadeService cidadeService; 	
 	
 	@Autowired
-	private Map<String , ProcessaRetorno> mapaRetorno;
+	private TipoRetornoFactory tipoRetornoFactory;
+
+	
 
 	
 	@GetMapping("/exportar")
 	public ResponseEntity<?> gerarRetorno(@RequestParam(name = "type") String returnType) throws Exception{
-	    return mapaRetorno.get(returnType).processar(montarRetorno());
+	    return   tipoRetornoFactory
+	    		.getStrategyTipoRetorno(returnType)
+	    		.processar(montarRetorno());
 	}
-	
 	
 	private List<CidadeEstadoTO> montarRetorno() throws JsonParseException, JsonMappingException, MalformedURLException, IOException {
 		
