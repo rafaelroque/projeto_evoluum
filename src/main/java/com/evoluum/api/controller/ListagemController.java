@@ -5,9 +5,17 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.websocket.server.PathParam;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,15 +44,28 @@ public class ListagemController {
 	
 	@Autowired
 	private TipoRetornoFactory tipoRetornoFactory;
-
 	
-
+	private Logger LOGGER = LogManager.getLogger(ListagemController.class);
+	
 	
 	@GetMapping("/exportar")
 	public ResponseEntity<?> gerarRetorno(@RequestParam(name = "type") String returnType) throws Exception{
-	    return   tipoRetornoFactory
-	    		.getStrategyTipoRetorno(returnType)
-	    		.processar(montarRetorno());
+	    return tipoRetornoFactory.getStrategyTipoRetorno(returnType).processar(montarRetorno());
+	}
+	
+	@GetMapping("/buscarIdCidade/{nomeCidade}")
+	public ResponseEntity<String> retornarIdCidade(@PathVariable String nomeCidade) throws JsonParseException, JsonMappingException, MalformedURLException, IOException{
+		
+		long inicio = System.currentTimeMillis();
+		String idCidade = cidadeService.returnCityId(nomeCidade);
+		long fim = System.currentTimeMillis();
+		
+		LOGGER.info("Tempo pra pesquisar::"+(fim - inicio) / 1000F);
+		
+		return ResponseEntity
+				.ok()				
+				.body(idCidade);
+
 	}
 	
 	private List<CidadeEstadoTO> montarRetorno() throws JsonParseException, JsonMappingException, MalformedURLException, IOException {

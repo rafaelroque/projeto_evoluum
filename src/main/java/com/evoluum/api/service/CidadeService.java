@@ -32,7 +32,7 @@ public class CidadeService {
 			})
 	public Set<Cidade> getCidades(Estado estado) throws JsonParseException, JsonMappingException, MalformedURLException, IOException{
 		ObjectMapper objectMapper = new ObjectMapper();
-		String urlCidade = Constantes.API_CIDADES.replace(Constantes.PLACEHOLDER_UF, estado.getSigla());
+		String urlCidade = Constantes.API_CIDADES_POR_UF.replace(Constantes.PLACEHOLDER_UF, estado.getSigla());
 		Set<Cidade> cidades = objectMapper.readValue(new URL(urlCidade), new TypeReference<Set<Cidade>>(){});
 		return cidades;
 	}
@@ -41,6 +41,20 @@ public class CidadeService {
 		LOGGER.info("Executando fallback");
 		LOGGER.error("Erro ao acessar endpoint de Cidades", e);
 		throw new ListagemException();
+	}
+	
+	@Cacheable("idCidade")
+	public String returnCityId(String nomeCidade) throws JsonParseException, JsonMappingException, MalformedURLException, IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		String urlCidade = Constantes.API_CIDADES;
+		Set<Cidade> cidades = objectMapper.readValue(new URL(urlCidade), new TypeReference<Set<Cidade>>(){});
+		
+		for(Cidade cid : cidades) {
+			if(cid.getNome().equals(nomeCidade)) {
+				return cid.getId();
+			}
+		}
+		return null;
 	}
 
 }
