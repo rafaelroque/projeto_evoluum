@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,17 +45,25 @@ public class CidadeService {
 	}
 	
 	@Cacheable("idCidade")
+	@HystrixCommand(fallbackMethod = "getFallBackreturnCityId", commandProperties = {
+			   @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "30000")
+			})
 	public String returnCityId(String nomeCidade) throws JsonParseException, JsonMappingException, MalformedURLException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String urlCidade = Constantes.API_CIDADES;
 		Set<Cidade> cidades = objectMapper.readValue(new URL(urlCidade), new TypeReference<Set<Cidade>>(){});
 		
-		for(Cidade cid : cidades) {
-			if(cid.getNome().equals(nomeCidade)) {
-				return cid.getId();
-			}
-		}
-		return null;
+		return cidades.stream()
+				.filter(c-> c.getNome().equals(nomeCidade))
+				.collect(Collectors.toList())
+				.get(0)
+				.getId();
+				
+
+	}
+	
+	public String getFallBackreturnCityId(String nomeCidade) {
+		return "0";
 	}
 
 }
