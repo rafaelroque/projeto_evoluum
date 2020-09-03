@@ -1,5 +1,8 @@
 package com.evoluum.api.enumeration;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum EnumTipoRetorno {
 	
 	JSON,
@@ -7,12 +10,12 @@ public enum EnumTipoRetorno {
 	PDF;
 	
 	public static EnumTipoRetorno findTipoRetorno(String tipoRetorno) {
-		for(EnumTipoRetorno enumeration : EnumTipoRetorno.values()) {
-			if(tipoRetorno.trim().toUpperCase().equals(enumeration.name()) ){
-				return enumeration;
-			}
-		}
-		return null;
-	}
+		
+		return Arrays.stream(EnumTipoRetorno.values())
+				.filter(enumTipo-> enumTipo.name().equals(tipoRetorno.toUpperCase()))
+				.findFirst()
+				.get();
+	
+}
 	
 }

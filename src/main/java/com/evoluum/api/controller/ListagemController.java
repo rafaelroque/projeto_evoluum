@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.evoluum.api.entity.Cidade;
 import com.evoluum.api.to.CidadeEstadoTO;
 import com.evoluum.api.entity.Estado;
+import com.evoluum.api.retorno.ProcessaRetornoXml;
+import com.evoluum.api.retorno.StrategyTipoRetorno;
 import com.evoluum.api.retorno.TipoRetornoFactory;
 import com.evoluum.api.service.CidadeService;
 import com.evoluum.api.service.EstadoService;
@@ -50,7 +52,8 @@ public class ListagemController {
 	
 	@GetMapping("/exportar")
 	public ResponseEntity<?> gerarRetorno(@RequestParam(name = "type") String returnType) throws Exception{
-	    return tipoRetornoFactory.getStrategyTipoRetorno(returnType).processar(montarRetorno());
+		StrategyTipoRetorno r= tipoRetornoFactory.getStrategyTipoRetorno(returnType);
+	    return r.processar(montarRetorno());
 	}
 	
 	@GetMapping("/buscarIdCidade/{nomeCidade}")
